@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favion.ico">
+    <title>ChartsonArc — AI Technical Analysis & Circle Web3 Payments</title>
+    <meta name="description"
+        content="Professional AI-powered technical chart analysis with EIP-712 authentication and USDC subscription payments on Circle Arc.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lightweight-charts@5.2.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+
+<body>
+    <div class="glass-bg-glow glow-indigo"></div>
+    <div class="glass-bg-glow glow-violet"></div>
+
+    <div class="app-container">
+        <!-- ══════════════════════════════════════ -->
+        <!-- HEADER -->
+        <!-- ══════════════════════════════════════ -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="logo-icon">🌀</span>
+                <h1>Charts<span>on</span>ARC</h1>
+            </div>
+
+            <div class="header-controls">
+                <div id="mode-badge" class="badge badge-simulator">
+                    <span class="pulse"></span>
+                    <span id="mode-text">Simulator Mode</span>
+                </div>
+                <div id="ai-badge" class="badge badge-ai hidden">🤖 AI Active</div>
+                <button id="btn-connect-wallet" class="btn btn-primary">
+                    <svg class="wallet-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="currentColor"
+                            d="M19,9H2V21H19a3,3 0 0,0 3,-3V12A3,3 0 0,0 19,9M19,15H15V13H19V15M19,11V12.09c-.34-.06-.68-.09-1-.09H15a3,3 0 0,0-3,3V15c0,1.15.65,2.15 1.6,2.65L12,19.29V20H3V11H19M19,3H4V7H19A1,1 0 0,1 20,8H22A3,3 0 0,0 19,3Z" />
+                    </svg>
+                    <span id="wallet-btn-text">Connect Arc Wallet</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- MAIN DASHBOARD GRID -->
+        <!-- ══════════════════════════════════════ -->
+        <main class="dashboard-grid">
+
+            <!-- ──────────────────────────────── -->
+            <!-- LEFT PANEL: CHART + SEARCH -->
+            <!-- ──────────────────────────────── -->
+            <section class="panel-left card">
+
+                <!-- CHART PANEL HEADER -->
+                <div class="card-header chart-panel-header">
+                    <div class="chart-left-controls">
+
+                        <!-- Pair Search -->
+                        <div class="search-wrapper">
+                            <div class="search-bar-group">
+                                <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor"
+                                        d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                                </svg>
+                                <input type="text" id="pair-search-input" class="pair-search-input"
+                                    placeholder="Search pair… BTC, ETH, TSLA" autocomplete="off">
+                                <button id="btn-clear-search" class="btn-clear-search hidden">✕</button>
+                            </div>
+                            <div id="search-dropdown" class="search-dropdown hidden"></div>
+                        </div>
+
+                        <!-- Timeframe Tabs -->
+                        <div class="timeframe-badges">
+                            <span class="timeframe active" data-tf="1H">1H</span>
+                            <span class="timeframe" data-tf="4H">4H</span>
+                            <span class="timeframe" data-tf="1D">1D</span>
+                            <span class="timeframe" data-tf="1W">1W</span>
+                        </div>
+                    </div>
+
+                    <div class="price-indicator">
+                        <span id="current-price" class="price-value">$68,432.50</span>
+                        <span id="price-change" class="price-change-positive">+3.42%</span>
+                    </div>
+                </div>
+
+                <!-- CHART MODE TABS -->
+                <div class="chart-mode-tabs">
+                    <button id="tab-live-chart" class="chart-mode-tab active" data-mode="live">
+                        📈 Live Chart
+                    </button>
+                    <button id="tab-upload-chart" class="chart-mode-tab" data-mode="upload">
+                        📷 Upload Chart
+                    </button>
+                </div>
+
+                <!-- CHART TOOLS -->
+                <div class="chart-tools-bar">
+                    <div class="chart-tools-group">
+                        <button id="btn-chart-reset-zoom" class="btn btn-sm btn-outline" title="Reset Zoom">
+                            🔄 Reset
+                        </button>
+                        <button id="btn-chart-toggle-legend" class="btn btn-sm btn-outline active" title="Toggle Legend">
+                            📋 Legend
+                        </button>
+                        <button id="btn-chart-download" class="btn btn-sm btn-outline" title="Download Chart">
+                            ⬇️ Download
+                        </button>
+                    </div>
+                    <div class="chart-tools-group">
+                        <label class="chart-theme-toggle">
+                            <input type="checkbox" id="chart-dark-mode" checked>
+                            <span>🌙 Dark</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ═══ LIVE CHART MODE ═══ -->
+                <div id="mode-live-chart">
+                    <!-- Chart Canvas -->
+                    <div class="chart-wrapper">
+                        <div id="chart-container"></div>
+                        <div id="chart-overlay-status" class="chart-overlay-status hidden">
+                            <span class="badge badge-ai">🤖 AI Analysis Active</span>
+                        </div>
+                    </div>
+
+                    <!-- Indicator Controls -->
+                    <div class="chart-controls">
+                        <div class="control-group">
+                            <h3>Core Overlays</h3>
+                            <div class="toggle-buttons">
+                                <button id="toggle-ma" class="btn btn-outline active">MA (14)</button>
+                                <button id="toggle-bb" class="btn btn-outline">Bollinger Bands</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <h3>Premium Signals</h3>
+                            <div class="toggle-buttons">
+                                <button id="toggle-rsi" class="btn btn-outline locked">
+                                    <span>RSI Divergences</span><span class="lock-icon">🔒</span>
+                                </button>
+                                <button id="toggle-macd" class="btn btn-outline locked">
+                                    <span>MACD Breakouts</span><span class="lock-icon">🔒</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <h3>Analysis</h3>
+                            <div class="toggle-buttons">
+                                <button id="btn-analyze-chart" class="btn btn-outline" disabled>
+                                    🤖 AI Analyze
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ UPLOAD CHART MODE ═══ -->
+                <div id="mode-upload-chart" class="hidden">
+                    <div class="upload-zone-wrapper">
+                        <div id="upload-dropzone" class="upload-dropzone">
+                            <input type="file" id="chart-file-input" accept="image/jpeg,image/png,image/webp"
+                                class="hidden">
+                            <div id="upload-placeholder" class="upload-placeholder">
+                                <div class="upload-icon">📷</div>
+                                <h3>Upload Your Chart</h3>
+                                <p>Drag & drop any chart screenshot here, or click to browse</p>
+                                <p class="upload-hint">Supports JPEG, PNG, WEBP · Max 15MB</p>
+                                <button id="btn-pick-file" class="btn btn-secondary" style="margin-top:8px">Browse
+                                    File</button>
+                            </div>
+                            <div id="upload-preview" class="upload-preview hidden">
+                                <img id="preview-img" src="" alt="Chart Preview">
+                                <div class="preview-controls">
+                                    <div class="preview-info">
+                                        <span id="preview-filename" class="preview-filename">chart.png</span>
+                                        <span id="preview-size" class="preview-size">0 KB</span>
+                                    </div>
+                                    <div style="display:flex; flex-direction:column; gap:12px">
+                                        <div style="display:flex; align-items:center; gap:8px">
+                                            <label for="upload-pair-symbol"
+                                                style="font-size:12px; color:#9ca3af; min-width:60px">Pair:</label>
+                                            <input id="upload-pair-symbol" type="text"
+                                                placeholder="e.g. HYPEUSDT, ETH/USD"
+                                                style="flex:1; padding:6px 10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#fff; font-size:12px;" />
+                                        </div>
+                                        <div style="display:flex; gap:8px">
+                                            <button id="btn-change-file"
+                                                class="btn btn-outline btn-small">Change</button>
+                                            <button id="btn-run-ai-analysis" class="btn btn-accent">
+                                                🤖 Analyze with AI
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Analysis Loading -->
+                        <div id="upload-analysis-loading" class="analysis-status hidden" style="padding: 40px">
+                            <div class="ai-thinking-animation">
+                                <div class="ai-dot"></div>
+                                <div class="ai-dot"></div>
+                                <div class="ai-dot"></div>
+                            </div>
+                            <p style="margin-top:16px">AI is reading your chart pattern…</p>
+                            <p class="small-text">Identifying structures, support/resistance, entry & exit zones</p>
+                        </div>
+                    </div>
+
+                    <!-- Upload Analysis Results -->
+                    <div id="upload-analysis-results" class="upload-results hidden"></div>
+                </div>
+
+            </section>
+
+            <!-- ──────────────────────────────── -->
+            <!-- RIGHT PANEL: WALLET + AI -->
+            <!-- ──────────────────────────────── -->
+            <section class="panel-right">
+
+                <!-- WALLET CARD -->
+                <div id="wallet-card" class="card wallet-card">
+                    <div class="card-header-small">
+                        <h2>Arc Wallet Gateway</h2>
+                        <span class="wallet-status disconnected" id="wallet-indicator">Disconnected</span>
+                    </div>
+
+                    <div class="wallet-body">
+                        <!-- DISCONNECTED -->
+                        <div id="wallet-state-disconnected" class="wallet-state">
+                            <div class="icon-avatar">🔑</div>
+                            <p>Connect your Circle Arc developer wallet to access AI signals and subscribe to a plan.
+                            </p>
+                            <button id="btn-connect-wallet-body" class="btn btn-secondary btn-full">Quick-Connect Arc
+                                Wallet</button>
+                        </div>
+
+                        <!-- SIGN REQUIRED -->
+                        <div id="wallet-state-sign" class="wallet-state hidden">
+                            <div class="wallet-info-row">
+                                <span class="label">Address:</span>
+                                <span class="value address-field" id="wallet-address">0x000...000</span>
+                            </div>
+                            <div class="wallet-info-row">
+                                <span class="label">Network:</span>
+                                <span class="value">Arc L1 Testnet</span>
+                            </div>
+                            <div class="divider"></div>
+                            <h3>Verify Account</h3>
+                            <p class="small-desc">Sign the EIP-712 message to establish a secure session via Circle's
+                                Arc Developer Wallet API.</p>
+                            <div class="eip-message-box">
+                                <span class="msg-title">EIP-712 Typed Data</span>
+                                <pre id="eip-payload">Loading typed data payload...</pre>
+                            </div>
+                            <button id="btn-sign-message" class="btn btn-accent btn-full">⚡ Sign & Authenticate</button>
+                        </div>
+
+                        <!-- AUTHENTICATED -->
+                        <div id="wallet-state-authenticated" class="wallet-state hidden">
+                            <div class="wallet-info-row">
+                                <span class="label">Wallet:</span>
+                                <span class="value address-field" id="circle-wallet-id">0x000...000</span>
+                            </div>
+                            <div class="wallet-info-row">
+                                <span class="label">Balance:</span>
+                                <span class="value balance-glow" id="wallet-balance">250.00 USDC</span>
+                            </div>
+                            <div class="wallet-info-row">
+                                <span class="label">Session:</span>
+                                <span class="value text-success">✓ Verified EIP-712</span>
+                            </div>
+                            <button id="btn-disconnect-wallet" class="btn btn-outline btn-small"
+                                style="margin-top:4px; color: var(--error); border-color: rgba(239,68,68,0.3);">⏻
+                                Disconnect</button>
+                            <div class="divider"></div>
+
+                            <!-- SUBSCRIPTION PLANS (shown when no plan) -->
+                            <div id="subscription-plans-box">
+                                <div class="plans-title">
+                                    <span>🔮</span>
+                                    <h3>Choose Your Plan</h3>
+                                </div>
+                                <p class="small-desc" style="margin-bottom:12px">Pay once per session with USDC via
+                                    Circle Arc. Gasless instant settlement.</p>
+
+                                <div class="plan-cards-grid">
+                                    <!-- STARTER -->
+                                    <div class="plan-card" data-plan="starter" data-amount="3" data-pairs="5">
+                                        <div class="plan-badge">Starter</div>
+                                        <div class="plan-price">
+                                            <span class="plan-price-amount">3</span>
+                                            <span class="plan-price-unit">USDC</span>
+                                        </div>
+                                        <ul class="plan-feature-list">
+                                            <li>✓ <strong>5 pairs</strong> analysis</li>
+                                            <li>✓ Chart upload + AI</li>
+                                            <li>✓ Entry / SL / TP levels</li>
+                                            <li>✗ RSI / MACD overlays</li>
+                                        </ul>
+                                        <button class="btn btn-plan btn-plan-starter btn-full"
+                                            data-plan="starter">Subscribe</button>
+                                    </div>
+
+                                    <!-- PRO -->
+                                    <div class="plan-card plan-card-featured" data-plan="pro" data-amount="5"
+                                        data-pairs="10">
+                                        <div class="plan-badge plan-badge-pro">⚡ Pro</div>
+                                        <div class="plan-price">
+                                            <span class="plan-price-amount">5</span>
+                                            <span class="plan-price-unit">USDC</span>
+                                        </div>
+                                        <ul class="plan-feature-list">
+                                            <li>✓ <strong>10 pairs</strong> analysis</li>
+                                            <li>✓ Chart upload + AI</li>
+                                            <li>✓ Entry / SL / TP levels</li>
+                                            <li>✓ RSI + MACD overlays</li>
+                                        </ul>
+                                        <button class="btn btn-plan btn-plan-pro btn-full"
+                                            data-plan="pro">Subscribe</button>
+                                    </div>
+
+                                    <!-- ELITE -->
+                                    <div class="plan-card plan-card-elite" data-plan="elite" data-amount="15"
+                                        data-pairs="35">
+                                        <div class="plan-badge plan-badge-elite">👑 Elite</div>
+                                        <div class="plan-price">
+                                            <span class="plan-price-amount">15</span>
+                                            <span class="plan-price-unit">USDC</span>
+                                        </div>
+                                        <ul class="plan-feature-list">
+                                            <li>✓ <strong>35 pairs</strong> analysis</li>
+                                            <li>✓ Chart upload + AI</li>
+                                            <li>✓ Entry / SL / TP levels</li>
+                                            <li>✓ RSI + MACD overlays</li>
+                                            <li>✓ Priority AI analysis</li>
+                                            <li>✓ Multi-timeframe signals</li>
+                                        </ul>
+                                        <button class="btn btn-plan btn-plan-elite btn-full"
+                                            data-plan="elite">Subscribe</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ACTIVE SUBSCRIPTION (shown after purchase) -->
+                            <div id="subscription-active-box" class="subscription-active-box hidden">
+                                <div class="active-plan-header">
+                                    <div>
+                                        <div id="active-plan-badge" class="active-plan-badge">PRO PLAN</div>
+                                        <div id="active-plan-label" class="active-plan-label">Arc Wallet Verified</div>
+                                    </div>
+                                    <div class="pairs-quota">
+                                        <div class="pairs-quota-label">Pairs Used</div>
+                                        <div class="pairs-quota-count">
+                                            <span id="pairs-used">0</span><span class="pairs-quota-sep">/</span><span
+                                                id="pairs-allowed">10</span>
+                                        </div>
+                                        <div class="pairs-quota-bar">
+                                            <div id="pairs-quota-fill" class="pairs-quota-fill" style="width:0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="active-plan-features" id="active-plan-features"></div>
+                                <div class="active-plan-actions">
+                                    <button id="btn-buy-more-lives" class="btn btn-secondary">Add Credits</button>
+                                    <button id="btn-upgrade-plan" class="btn btn-primary">Upgrade Plan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI CHART ANALYST CARD -->
+                <div class="card analyst-card">
+                    <div class="card-header-small">
+                        <h2>AI Chart Analyst</h2>
+                        <button id="btn-refresh-analysis" class="btn btn-small" disabled>Re-analyze</button>
+                    </div>
+
+                    <div class="analyst-body">
+                        <div id="analysis-placeholder" class="analysis-status">
+                            <div class="status-icon">🤖</div>
+                            <p>Connect wallet & load a pair or upload a chart to get AI analysis with precise entry, SL
+                                & TP levels.</p>
+                        </div>
+
+                        <div id="analysis-loading" class="analysis-status hidden">
+                            <div class="spinner"></div>
+                            <p>Analyzing candlestick patterns…</p>
+                        </div>
+
+                        <!-- RESULTS -->
+                        <div id="analysis-results" class="analysis-results hidden">
+                            <div class="signal-header">
+                                <div class="signal-badge" id="signal-badge">BULLISH BREAKOUT</div>
+                                <div class="confidence-indicator">
+                                    Confidence: <strong id="confidence-value">87%</strong>
+                                </div>
+                            </div>
+
+                            <!-- POSITION CARDS -->
+                            <div class="position-cards">
+                                <div class="position-card entry-card">
+                                    <div class="pos-label">📍 Entry</div>
+                                    <div class="pos-price" id="pos-entry">$0.00</div>
+                                    <div class="pos-rationale" id="pos-entry-rationale"></div>
+                                </div>
+                                <div class="position-card sl-card">
+                                    <div class="pos-label">🛑 Stop Loss</div>
+                                    <div class="pos-price" id="pos-sl">$0.00</div>
+                                    <div class="pos-meta">
+                                        <span id="pos-sl-pct" class="pos-pct sl-pct">-0.0%</span>
+                                    </div>
+                                    <div class="pos-rationale" id="pos-sl-rationale"></div>
+                                </div>
+                                <div class="position-card tp1-card">
+                                    <div class="pos-label">🎯 Target 1</div>
+                                    <div class="pos-price" id="pos-tp1">$0.00</div>
+                                    <div class="pos-meta">
+                                        <span id="pos-tp1-pct" class="pos-pct tp-pct">+0.0%</span>
+                                        <span id="pos-tp1-rr" class="pos-rr">1.5R</span>
+                                    </div>
+                                </div>
+                                <div class="position-card tp2-card">
+                                    <div class="pos-label">🏆 Target 2</div>
+                                    <div class="pos-price" id="pos-tp2">$0.00</div>
+                                    <div class="pos-meta">
+                                        <span id="pos-tp2-pct" class="pos-pct tp-pct">+0.0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="report-section">
+                                <h3>📊 Pattern</h3>
+                                <p id="report-pattern"></p>
+                            </div>
+
+                            <div class="report-section">
+                                <h3>📉 Key Levels</h3>
+                                <div class="levels-grid">
+                                    <div class="level-card sup">
+                                        <span class="label">Support</span>
+                                        <span class="value" id="val-support-1">$0.00</span>
+                                    </div>
+                                    <div class="level-card res">
+                                        <span class="label">Resistance</span>
+                                        <span class="value" id="val-resistance-1">$0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="report-section" id="indicator-analysis-section" style="margin-bottom:10px;">
+                                <h3>📈 Indicator Insights</h3>
+                                <div class="indicator-grid" style="display:grid;gap:10px;grid-template-columns:1fr 1fr;">
+                                    <div class="indicator-card" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;">
+                                        <div class="indicator-title" style="font-weight:700;margin-bottom:6px">RSI</div>
+                                        <div class="indicator-value" id="indicator-rsi-value" style="font-size:18px;font-weight:800;">0.00</div>
+                                        <div class="indicator-status" id="indicator-rsi-status" style="margin:6px 0;color:#94a3b8;">Neutral</div>
+                                        <div class="indicator-summary" id="indicator-rsi-summary" style="font-size:13px;color:#d1d5db;">Loading RSI summary...</div>
+                                    </div>
+                                    <div class="indicator-card" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;">
+                                        <div class="indicator-title" style="font-weight:700;margin-bottom:6px">MACD</div>
+                                        <div class="indicator-value" id="indicator-macd-value" style="font-size:18px;font-weight:800;">0.00</div>
+                                        <div class="indicator-status" id="indicator-macd-status" style="margin:6px 0;color:#94a3b8;">Neutral</div>
+                                        <div class="indicator-summary" id="indicator-macd-summary" style="font-size:13px;color:#d1d5db;">Loading MACD summary...</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="report-section">
+                                <div class="risk-timeframe-row">
+                                    <div class="risk-pill" id="risk-pill">MEDIUM RISK</div>
+                                    <div class="timeframe-pill" id="timeframe-pill">1–3 days</div>
+                                </div>
+                            </div>
+
+                            <div class="report-section">
+                                <h3>🔮 Narrative</h3>
+                                <p id="report-narrative" class="italic-desc"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- DEVELOPER API TERMINAL DRAWER -->
+        <!-- ══════════════════════════════════════ -->
+        <footer class="dev-terminal card collapsible-closed" id="dev-terminal">
+            <div class="terminal-header" id="terminal-header">
+                <div class="terminal-title">
+                    <span class="term-icon">📟</span>
+                    <h2>Circle Web3 API Live Inspector</h2>
+                    <span class="term-status-badge">Idle</span>
+                </div>
+                <div class="terminal-actions">
+                    <button class="btn btn-text btn-small" id="btn-clear-logs">Clear Logs</button>
+                    <button class="btn-toggle-terminal" id="btn-toggle-terminal">
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path fill="currentColor"
+                                d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="terminal-body" id="terminal-body">
+                <div class="terminal-side-nav">
+                    <div class="nav-title">Active Requests</div>
+                    <div class="request-list" id="terminal-request-list">
+                        <div class="empty-list-desc">API operations will appear here in real time…</div>
+                    </div>
+                </div>
+
+                <div class="terminal-viewer">
+                    <div class="viewer-header">
+                        <span id="viewer-method-badge" class="badge">POST</span>
+                        <span id="viewer-url">https://api.circle.com/v1/w3s/developer/transactions/transfer</span>
+                    </div>
+                    <div class="viewer-panes">
+                        <div class="pane">
+                            <div class="pane-title">Request Payload (JSON)</div>
+                            <pre><code id="viewer-request-payload">{}</code></pre>
+                        </div>
+                        <div class="pane">
+                            <div class="pane-title">Response Output (JSON)</div>
+                            <pre><code id="viewer-response-payload">{}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- WALLET SELECTOR MODAL -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="wallet-modal" class="wallet-modal-overlay hidden">
+        <div class="wallet-modal">
+            <div class="wallet-modal-header">
+                <h2>Connect Wallet</h2>
+                <button id="btn-close-modal" class="btn-modal-close">✕</button>
+            </div>
+            <p class="wallet-modal-desc">Select a wallet to connect to ChartsonArc. Your wallet will be used for EIP-712
+                authentication and USDC payments via Circle Arc.</p>
+
+            <div class="wallet-options-list">
+                <button class="wallet-option" data-wallet="circle-arc">
+                    <div class="wallet-option-icon wallet-icon-arc">🌀</div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Circle Arc Wallet</div>
+                        <div class="wallet-option-desc">Developer-controlled wallet · Gasless USDC</div>
+                    </div>
+                    <div class="wallet-option-badge recommended">Recommended</div>
+                </button>
+
+                <button class="wallet-option" data-wallet="metamask">
+                    <div class="wallet-option-icon wallet-icon-mm">🦊</div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">MetaMask</div>
+                        <div class="wallet-option-desc">Browser extension wallet</div>
+                    </div>
+                    <div class="wallet-option-badge">Popular</div>
+                </button>
+
+                <button class="wallet-option" data-wallet="walletconnect">
+                    <div class="wallet-option-icon wallet-icon-wc">🔗</div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">WalletConnect</div>
+                        <div class="wallet-option-desc">Scan QR code from mobile wallet</div>
+                    </div>
+                    <div class="wallet-option-badge">Mobile</div>
+                </button>
+
+                <button class="wallet-option" data-wallet="coinbase">
+                    <div class="wallet-option-icon wallet-icon-cb">💎</div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Coinbase Wallet</div>
+                        <div class="wallet-option-desc">Self-custody wallet by Coinbase</div>
+                    </div>
+                    <div class="wallet-option-badge">Trusted</div>
+                </button>
+
+                <button class="wallet-option" data-wallet="phantom">
+                    <div class="wallet-option-icon wallet-icon-ph">👻</div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Phantom</div>
+                        <div class="wallet-option-desc">Multi-chain wallet · SOL / ETH / BTC</div>
+                    </div>
+                    <div class="wallet-option-badge">Multi-chain</div>
+                </button>
+            </div>
+
+            <div id="wallet-error-toast" class="wallet-error-toast hidden"></div>
+
+            <div class="wallet-modal-footer">
+                <p>By connecting, you agree to ChartsonArc's Terms of Service</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="browser-error-banner" style="position:fixed; bottom:20px; right:20px; background:rgba(239,68,68,0.95); color:white; padding:16px; border-radius:8px; font-family:monospace; z-index:99999; max-width:400px; box-shadow:0 10px 25px rgba(0,0,0,0.5); display:none; font-size:12px; line-height:1.4;">
+        <div style="font-weight:bold; margin-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.3); padding-bottom:4px;">🚨 Browser JS Error Detected</div>
+        <div id="browser-error-msg"></div>
+        <button onclick="this.parentElement.style.display='none'" style="margin-top:10px; background:rgba(255,255,255,0.2); border:none; color:white; padding:4px 8px; border-radius:4px; cursor:pointer;">Dismiss</button>
+    </div>
+
+    <script>
+        function showError(msg) {
+            const banner = document.getElementById('browser-error-banner');
+            const msgEl = document.getElementById('browser-error-msg');
+            if (banner && msgEl) {
+                msgEl.textContent = msg;
+                banner.style.display = 'block';
+            }
+        }
+        window.addEventListener('error', (event) => {
+            const errStr = event.message + ' at ' + event.filename + ':' + event.lineno + ':' + event.colno;
+            showError(errStr);
+            fetch('/api/log-error', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: errStr })
+            }).catch(() => {});
+        });
+        window.addEventListener('unhandledrejection', (event) => {
+            const errStr = 'Unhandled Rejection: ' + String(event.reason?.stack || event.reason);
+            showError(errStr);
+            fetch('/api/log-error', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: errStr })
+            }).catch(() => {});
+        });
+    </script>
+    <script src="app.js"></script>
+</body>
+
+</html>

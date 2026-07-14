@@ -1,0 +1,24 @@
+{
+  "name": "chartsonarc",
+  "version": "1.0.0",
+  "description": "ChartsonArc: AI-powered Technical Analysis on Circle's Arc blockchain",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^10.3.1",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.6.8",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "helmet": "^8.2.0",
+    "lightweight-charts": "^5.2.0",
+    "multer": "^2.1.1",
+    "technicalindicators": "^3.1.0",
+    "uuid": "^9.0.1"
+  }
+}
