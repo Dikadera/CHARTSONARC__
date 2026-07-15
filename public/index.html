@@ -98,6 +98,9 @@
                     <button id="tab-upload-chart" class="chart-mode-tab" data-mode="upload">
                         📷 Upload Chart
                     </button>
+                    <button id="tab-deploy-contract" class="chart-mode-tab" data-mode="deploy">
+                        🚀 Deploy Contract
+                    </button>
                 </div>
 
                 <!-- CHART TOOLS -->
@@ -217,6 +220,82 @@
 
                     <!-- Upload Analysis Results -->
                     <div id="upload-analysis-results" class="upload-results hidden"></div>
+                </div>
+
+                <!-- ═══ DEPLOY CONTRACT MODE ═══ -->
+                <div id="mode-deploy-contract" class="hidden">
+                    <div class="deploy-zone-wrapper">
+                        <div class="deploy-card">
+                            <h3>🚀 Arc Smart Contract Deployer</h3>
+                            <p class="small-desc" style="color: #9ca3af; margin-bottom: 16px;">Select a pre-compiled template or paste custom bytecode to deploy onto Arc L1.</p>
+                            
+                            <div class="deploy-field-group">
+                                <label for="deploy-template-select">Select Template:</label>
+                                <select id="deploy-template-select" class="deploy-input">
+                                    <option value="storage">Simple Message Storage (SimpleStorage)</option>
+                                    <option value="erc20">Custom ERC-20 Token (MyToken)</option>
+                                    <option value="custom">Custom EVM Bytecode</option>
+                                </select>
+                            </div>
+
+                            <!-- Simple Storage Inputs -->
+                            <div id="deploy-params-storage" class="deploy-params-group">
+                                <div class="deploy-field-group">
+                                    <label for="param-storage-msg">Initial Message:</label>
+                                    <input type="text" id="param-storage-msg" class="deploy-input" placeholder="Hello, Arc Blockchain!" value="Hello, Arc Blockchain!">
+                                </div>
+                            </div>
+
+                            <!-- ERC20 Inputs -->
+                            <div id="deploy-params-erc20" class="deploy-params-group hidden">
+                                <div class="deploy-field-group-grid">
+                                    <div class="deploy-field-group">
+                                        <label for="param-erc20-name">Token Name:</label>
+                                        <input type="text" id="param-erc20-name" class="deploy-input" placeholder="e.g. Arc Gold" value="Arc Gold">
+                                    </div>
+                                    <div class="deploy-field-group">
+                                        <label for="param-erc20-symbol">Token Symbol:</label>
+                                        <input type="text" id="param-erc20-symbol" class="deploy-input" placeholder="e.g. ARCG" value="ARCG">
+                                    </div>
+                                </div>
+                                <div class="deploy-field-group">
+                                    <label for="param-erc20-supply">Initial Supply (Tokens):</label>
+                                    <input type="number" id="param-erc20-supply" class="deploy-input" placeholder="e.g. 1000000" value="1000000">
+                                </div>
+                            </div>
+
+                            <!-- Custom Bytecode Inputs -->
+                            <div id="deploy-params-custom" class="deploy-params-group hidden">
+                                <div class="deploy-field-group">
+                                    <label for="param-custom-bytecode">Creation Bytecode (Hex):</label>
+                                    <textarea id="param-custom-bytecode" class="deploy-input code-input" placeholder="0x608060405234801561001057600080fd5b5060df8061001f6000396000f3fe..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Solidity Code Preview -->
+                            <div class="contract-code-section" id="contract-code-section">
+                                <div class="code-header">
+                                    <span>Solidity Template Code</span>
+                                    <span class="badge-solidity">sol v0.8.20</span>
+                                </div>
+                                <pre class="solidity-code"><code id="solidity-code-display">Loading solidity code template...</code></pre>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="deploy-actions">
+                                <button id="btn-submit-deployment" class="btn btn-accent btn-full">
+                                    🚀 Deploy Contract to Arc Testnet
+                                </button>
+                            </div>
+
+                            <!-- Live Status Console -->
+                            <div id="deploy-status-console" class="deploy-status-console hidden">
+                                <h4>Deployment Status</h4>
+                                <div class="console-logs" id="console-logs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </section>
