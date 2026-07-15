@@ -1415,6 +1415,9 @@ body {
 .wallet-icon-wc  { background: rgba(34, 211, 238, 0.15); }
 .wallet-icon-cb  { background: rgba(16, 185, 129, 0.15); }
 .wallet-icon-ph  { background: rgba(139, 92, 246, 0.15); }
+.wallet-icon-rabby { background: rgba(59, 130, 246, 0.15); }
+.wallet-icon-zerion { background: rgba(139, 92, 246, 0.15); }
+.wallet-icon-okx { background: rgba(255, 255, 255, 0.1); }
 
 .wallet-option-info { flex: 1; min-width: 0; }
 

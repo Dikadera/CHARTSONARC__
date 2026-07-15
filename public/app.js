@@ -1756,6 +1756,9 @@ const WALLET_ADDRESSES = {
   'walletconnect': '0xFABB0ac9d68B0B445fB7357272Ff202C5651694a',
   'coinbase':      '0x2546BcD3c84621e976D8185a91A922aE77ECEc30',
   'phantom':       '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199',
+  'rabby':         '0xdaFEA492D6B217D2361efA63D36928CFF95f1B22',
+  'zerion':        '0xa4FEA3982Cb9d7ef81A2a84B29ce1F34eeDC918C',
+  'okx':           '0xBba2c398695029D81b67eA2B591f86C29188e7FF',
 };
 
 const WALLET_NAMES = {
@@ -1764,6 +1767,9 @@ const WALLET_NAMES = {
   'walletconnect': 'WalletConnect',
   'coinbase': 'Coinbase',
   'phantom': 'Phantom',
+  'rabby': 'Rabby Wallet',
+  'zerion': 'Zerion Wallet',
+  'okx': 'OKX Wallet',
 };
 
 async function connectWalletWith(provider) {
@@ -1794,6 +1800,16 @@ async function connectWalletWith(provider) {
         metamaskProvider = window.ethereum;
       }
       if (!metamaskProvider) {
+        // Safari / iOS Detection:
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
+          return;
+        }
+        if (isSafari) {
+          throw new Error('MetaMask is not detected on Safari. If you have the Safari MetaMask extension installed, please ensure it is enabled in Safari settings -> Extensions.');
+        }
         throw new Error('MetaMask is not installed or not detected. Please install the MetaMask extension.');
       }
       const accounts = await metamaskProvider.request({ method: 'eth_requestAccounts' });
@@ -1820,6 +1836,60 @@ async function connectWalletWith(provider) {
       }
       const accounts = await phantomProvider.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) throw new Error('No accounts returned from Phantom');
+      address = accounts[0];
+
+    } else if (provider === 'rabby') {
+      const rabbyProvider = window.rabby || (window.ethereum?.isRabby ? window.ethereum : null);
+      if (!rabbyProvider) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = 'https://rabby.io';
+          return;
+        }
+        if (isSafari) {
+          throw new Error('Rabby Wallet is not detected on Safari. If you have the Safari Rabby extension installed, please ensure it is enabled in Safari settings -> Extensions.');
+        }
+        throw new Error('Rabby Wallet is not installed or not detected. Please install Rabby Wallet.');
+      }
+      const accounts = await rabbyProvider.request({ method: 'eth_requestAccounts' });
+      if (!accounts || accounts.length === 0) throw new Error('No accounts returned from Rabby Wallet');
+      address = accounts[0];
+
+    } else if (provider === 'zerion') {
+      const zerionProvider = window.zerion || (window.ethereum?.isZerion ? window.ethereum : null);
+      if (!zerionProvider) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = `https://zerion.app.link/dapp/${window.location.host}${window.location.pathname}`;
+          return;
+        }
+        if (isSafari) {
+          throw new Error('Zerion Wallet is not detected on Safari. If you have the Safari Zerion extension installed, please ensure it is enabled in Safari settings -> Extensions.');
+        }
+        throw new Error('Zerion Wallet is not installed or not detected. Please install Zerion Wallet.');
+      }
+      const accounts = await zerionProvider.request({ method: 'eth_requestAccounts' });
+      if (!accounts || accounts.length === 0) throw new Error('No accounts returned from Zerion Wallet');
+      address = accounts[0];
+
+    } else if (provider === 'okx') {
+      const okxProvider = window.okxwallet || (window.ethereum?.isOkxWallet ? window.ethereum : null);
+      if (!okxProvider) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = `okx://dapp/${window.location.host}${window.location.pathname}`;
+          return;
+        }
+        if (isSafari) {
+          throw new Error('OKX Wallet is not detected on Safari. If you have the Safari OKX extension installed, please ensure it is enabled in Safari settings -> Extensions.');
+        }
+        throw new Error('OKX Wallet is not installed or not detected. Please install OKX Wallet.');
+      }
+      const accounts = await okxProvider.request({ method: 'eth_requestAccounts' });
+      if (!accounts || accounts.length === 0) throw new Error('No accounts returned from OKX Wallet');
       address = accounts[0];
 
     } else if (provider === 'walletconnect') {
@@ -1892,6 +1962,9 @@ async function connectWalletWith(provider) {
 }
 
 function disconnectWallet() {
+  const confirmDisconnect = confirm("Are you sure you want to disconnect your wallet?");
+  if (!confirmDisconnect) return;
+
   state.walletConnected = false;
   state.authenticated = false;
   state.walletAddress = '';
@@ -2048,6 +2121,12 @@ document.getElementById('btn-sign-message').addEventListener('click', async () =
         ethereumProvider = window.phantom?.ethereum || (window.ethereum?.providers?.find(p => p.isPhantom)) || window.ethereum;
       } else if (provider === 'coinbase') {
         ethereumProvider = window.coinbaseWalletExtension || (window.ethereum?.providers?.find(p => p.isCoinbaseWallet)) || window.ethereum;
+      } else if (provider === 'rabby') {
+        ethereumProvider = window.rabby || (window.ethereum?.isRabby ? window.ethereum : null) || window.ethereum;
+      } else if (provider === 'zerion') {
+        ethereumProvider = window.zerion || (window.ethereum?.isZerion ? window.ethereum : null) || window.ethereum;
+      } else if (provider === 'okx') {
+        ethereumProvider = window.okxwallet || (window.ethereum?.isOkxWallet ? window.ethereum : null) || window.ethereum;
       }
 
       if (!ethereumProvider && window.ethereum) {
@@ -2212,6 +2291,12 @@ async function subscribeToPlan(planKey) {
         ethereumProvider = window.phantom?.ethereum || (window.ethereum?.providers?.find(p => p.isPhantom)) || window.ethereum;
       } else if (provider === 'coinbase') {
         ethereumProvider = window.coinbaseWalletExtension || (window.ethereum?.providers?.find(p => p.isCoinbaseWallet)) || window.ethereum;
+      } else if (provider === 'rabby') {
+        ethereumProvider = window.rabby || (window.ethereum?.isRabby ? window.ethereum : null) || window.ethereum;
+      } else if (provider === 'zerion') {
+        ethereumProvider = window.zerion || (window.ethereum?.isZerion ? window.ethereum : null) || window.ethereum;
+      } else if (provider === 'okx') {
+        ethereumProvider = window.okxwallet || (window.ethereum?.isOkxWallet ? window.ethereum : null) || window.ethereum;
       }
 
       if (!ethereumProvider) {
@@ -2379,6 +2464,12 @@ async function buyMoreLives() {
         ethereumProvider = window.phantom?.ethereum || (window.ethereum?.providers?.find(p => p.isPhantom)) || window.ethereum;
       } else if (provider === 'coinbase') {
         ethereumProvider = window.coinbaseWalletExtension || (window.ethereum?.providers?.find(p => p.isCoinbaseWallet)) || window.ethereum;
+      } else if (provider === 'rabby') {
+        ethereumProvider = window.rabby || (window.ethereum?.isRabby ? window.ethereum : null) || window.ethereum;
+      } else if (provider === 'zerion') {
+        ethereumProvider = window.zerion || (window.ethereum?.isZerion ? window.ethereum : null) || window.ethereum;
+      } else if (provider === 'okx') {
+        ethereumProvider = window.okxwallet || (window.ethereum?.isOkxWallet ? window.ethereum : null) || window.ethereum;
       }
 
       if (!ethereumProvider && window.ethereum) {
@@ -2743,6 +2834,12 @@ contract ArcCustomToken {
           ethereumProvider = window.phantom?.ethereum || (window.ethereum?.providers?.find(p => p.isPhantom)) || window.ethereum;
         } else if (provider === 'coinbase') {
           ethereumProvider = window.coinbaseWalletExtension || (window.ethereum?.providers?.find(p => p.isCoinbaseWallet)) || window.ethereum;
+        } else if (provider === 'rabby') {
+          ethereumProvider = window.rabby || (window.ethereum?.isRabby ? window.ethereum : null) || window.ethereum;
+        } else if (provider === 'zerion') {
+          ethereumProvider = window.zerion || (window.ethereum?.isZerion ? window.ethereum : null) || window.ethereum;
+        } else if (provider === 'okx') {
+          ethereumProvider = window.okxwallet || (window.ethereum?.isOkxWallet ? window.ethereum : null) || window.ethereum;
         }
 
         if (!ethereumProvider && window.ethereum) {
